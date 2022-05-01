@@ -1,0 +1,39 @@
+name: deploy-website
+
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  deploy-website:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8.6
+
+    - name: Install dependencies
+      run: pip install ablog sphinx-bootstrap-theme
+
+    - name: Build the site
+      run: ablog build
+        
+    - name: Create .nojekyll file
+      uses: 1arp/create-a-file-action@0.2
+      with:
+          path: '_website'
+          file: '.nojekyll'
+
+    # - name: Push to .github.io repository
+    #   uses: cpina/github-action-push-to-another-repository@main
+    #   env:
+    #     API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+    #   with:
+    #     source-directory: '_website'
+    #     destination-github-username: 'faktor14magazin'
+    #     destination-repository-name: 'faktor14magazin.github.io'
+    #     user-email: faktor14magazin@gmail.com
+    #     target-branch: master
